@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#b99bd8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Letter Box">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<title>Letter Box 💌</title>
+<style>
+:root{--bg:#faf5fb;--card:#fff;--ink:#4d4052;--muted:#8b7d91;--accent:#a982c5;--accent2:#e8bfd5;--gold:#c8a45d;--shadow:0 12px 35px #5c416018}
+*{box-sizing:border-box}body{margin:0;font-family:Georgia,"Times New Roman",serif;background:linear-gradient(135deg,#fbf7ff,#fff8f5);color:var(--ink)}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}
+.app{min-height:100vh;padding-bottom:90px}.top{padding:28px 18px 18px;text-align:center}.brand{font-size:34px;color:#775b83;margin:0}.subtitle{color:var(--muted);margin:7px 0}
+nav{position:sticky;top:0;z-index:10;background:#ffffffdc;backdrop-filter:blur(12px);display:flex;justify-content:center;gap:7px;padding:10px;border-bottom:1px solid #eadfeb}
+nav button{background:transparent;color:#705f76;padding:10px 13px;border-radius:18px}nav button.active{background:#eadcf2;color:#5d4268}
+main{max-width:1050px;margin:auto;padding:16px}.hero{background:linear-gradient(135deg,#efe3f7,#fff0ed);border:1px solid #ead8ed;border-radius:30px;padding:28px;box-shadow:var(--shadow);text-align:center}
+.hero h2{font-size:31px;margin:0 0 8px}.hero p{color:#776b7d}.btn{background:#9670ad;color:white;padding:12px 18px;border-radius:22px;box-shadow:0 7px 18px #9670ad33}.btn.secondary{background:#f0e6f3;color:#694e72}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat,.card{background:var(--card);border:1px solid #eee2f0;border-radius:22px;padding:18px;box-shadow:var(--shadow)}.stat b{font-size:27px;display:block}.stat span{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:15px}.letter-card{position:relative;overflow:hidden}.env{font-size:55px;text-align:center;padding:15px;background:linear-gradient(135deg,#f8e5ef,#eee1f7);border-radius:17px;margin-bottom:12px}.letter-card h3{margin:5px 0}.meta{font-size:13px;color:var(--muted);line-height:1.6}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}.tag{background:#f3eaf5;padding:5px 9px;border-radius:12px;font-size:12px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.small{padding:8px 11px;border-radius:15px;background:#f2eaf4;color:#604e65}.locked{filter:saturate(.65)}.lock{color:#a26d91}
+.empty{text-align:center;padding:45px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:#3f2d4780;display:none;align-items:center;justify-content:center;padding:18px;z-index:30}.modal.show{display:flex}.modalbox{background:#fffafc;border-radius:28px;max-width:720px;width:100%;max-height:92vh;overflow:auto;padding:25px;box-shadow:0 25px 80px #0003}.modalbox h2{margin-top:0}
+label{display:block;font-size:13px;color:#77687c;margin:12px 0 6px}input,textarea,select{width:100%;padding:12px;border:1px solid #ddcedf;border-radius:13px;background:white;color:var(--ink)}textarea{min-height:170px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.designs{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.design{padding:11px 5px;border-radius:14px;background:#f1e6f4;text-align:center;border:2px solid transparent}.design.selected{border-color:#9b72b1}
+.photo-input{background:#f7eef8;border-radius:15px;padding:12px;margin-top:8px}.preview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.preview img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px}.letter-view{background:#fffdf8;border:1px solid #eadfcf;border-radius:17px;padding:25px;line-height:1.8;white-space:pre-wrap;font-size:17px}.letter-view h3{margin-top:0}.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:9px;margin-top:15px}.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:13px}
+.countdown{font-size:13px;background:#f7e8f0;padding:7px 10px;border-radius:12px;display:inline-block}.search{margin-bottom:16px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:25px 0 12px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#55425b;color:white;padding:12px 18px;border-radius:20px;display:none;z-index:50}.toast.show{display:block}
+@media(max-width:650px){.stats{grid-template-columns:1fr 1fr 1fr}.row{grid-template-columns:1fr}.designs{grid-template-columns:repeat(3,1fr)}nav{overflow:auto;justify-content:flex-start}.brand{font-size:29px}.hero{padding:22px}.preview{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><h1 class="brand">💌 Letter Box</h1><p class="subtitle">Een klein plekje voor grote woorden.</p></header>
+<nav id="nav">
+<button class="active" data-page="home">🏠 Home</button><button data-page="letters">✉️ Brieven</button><button data-page="favorites">⭐ Favorieten</button><button data-page="search">🔎 Zoeken</button><button data-page="stats">📊 Statistieken</button>
+</nav>
+<main id="main"></main>
+</div>
+<div class="modal" id="modal"><div class="modalbox" id="modalbox"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const KEY="letterbox_v1";
+let letters=JSON.parse(localStorage.getItem(KEY)||"[]"), currentPhotos=[], editId=null, selectedDesign="lavender";
+const designs={lavender:["💜","Lavendel"],pink:["🌸","Roze"],sky:["💙","Lucht"],vintage:["📜","Vintage"],night:["🌙","Nacht"],floral:["🌷","Bloemen"]};
+const $=s=>document.querySelector(s);
+function save(){localStorage.setItem(KEY,JSON.stringify(letters))}
+function esc(s=""){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function toast(t){let x=$("#toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2200)}
+function fmt(d){if(!d)return "Geen datum";return new Date(d+"T12:00:00").toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"})}
+function isOpen(l){return !l.openDate || new Date(l.openDate+"T23:59:59")<=new Date()}
+function countdown(d){if(!d)return "";let diff=new Date(d+"T23:59:59")-new Date();if(diff<=0)return "✨ Klaar om te openen";let days=Math.ceil(diff/86400000);return `🔒 Nog ${days} dag${days==1?"":"en"}`}
+function card(l){let open=isOpen(l);return `<article class="card letter-card ${open?"":"locked"}"><div class="env">${designs[l.design]?.[0]||"💌"}</div><h3>${esc(l.title||"Zonder titel")} ${l.favorite?"⭐":""}</h3><div class="meta">Aan: ${esc(l.to||"mijzelf")}<br>📅 ${fmt(l.openDate)} ${!open?`<span class="countdown">${countdown(l.openDate)}</span>`:""}</div><div class="tags">${(l.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div><div class="actions"><button class="small" onclick="openLetter('${l.id}')">${open?"💌 Open":"🔒 Bekijken"}</button><button class="small" onclick="editLetter('${l.id}')">✏️</button><button class="small" onclick="toggleFav('${l.id}')">${l.favorite?"★":"☆"}</button><button class="small" onclick="deleteLetter('${l.id}')">🗑️</button></div></article>`}
+function render(page="home"){
+ document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ let m=$("#main");
+ if(page==="home"){
+  let recent=[...letters].sort((a,b)=>b.created-a.created).slice(0,3);
+  m.innerHTML=`<section class="hero"><h2>Welkom in jouw Letter Box 💌</h2><p>Bewaar lieve woorden, toekomstbrieven, herinneringen en kleine verrassingen.</p><button class="btn" onclick="newLetter()">＋ Nieuwe brief schrijven</button></section>
+  <div class="stats"><div class="stat"><b>${letters.length}</b><span>brieven</span></div><div class="stat"><b>${letters.filter(x=>x.favorite).length}</b><span>favorieten</span></div><div class="stat"><b>${letters.reduce((n,x)=>n+(x.photos?.length||0),0)}</b><span>foto's</span></div></div>
+  <div class="section-title"><h2>Recent geschreven</h2><button class="btn secondary" onclick="randomLetter()">🎲 Verrassing</button></div>
+  <div class="grid">${recent.length?recent.map(card).join(""):`<div class="card empty">Je Letter Box is nog leeg.<br><br>Schrijf je eerste brief! 💌</div>`}</div>`;
+ } else if(page==="letters") m.innerHTML=`<div class="section-title"><h2>Mijn brieven</h2><button class="btn" onclick="newLetter()">＋ Nieuwe</button></div><div class="grid">${letters.length?letters.map(card).join(""):`<div class="card empty">Nog geen brieven.</div>`}</div>`;
+ else if(page==="favorites"){let a=letters.filter(x=>x.favorite);m.innerHTML=`<div class="section-title"><h2>⭐ Favorieten</h2></div><div class="grid">${a.length?a.map(card).join(""):`<div class="card empty">Nog geen favoriete brieven.</div>`}</div>`}
+ else if(page==="search") m.innerHTML=`<h2>🔎 Zoeken</h2><input class="search" id="searchInput" placeholder="Zoek op titel, persoon, tekst of tag..." oninput="doSearch()"><div class="grid" id="results"></div>`;
+ else if(page==="stats"){let photos=letters.reduce((n,x)=>n+(x.photos?.length||0),0);let people=[...new Set(letters.map(x=>x.to).filter(Boolean))];m.innerHTML=`<h2>📊 Jouw Letter Box</h2><div class="stats"><div class="stat"><b>${letters.length}</b><span>brieven</span></div><div class="stat"><b>${photos}</b><span>foto's</span></div><div class="stat"><b>${people.length}</b><span>personen</span></div></div><div class="card"><h3>💌 Kleine statistieken</h3><p>Favorieten: ${letters.filter(x=>x.favorite).length}</p><p>Gesloten brieven: ${letters.filter(x=>!isOpen(x)).length}</p><p>Openbare/openbare datumloze brieven: ${letters.filter(x=>isOpen(x)).length}</p><hr><button class="btn secondary" onclick="backup()">📤 Backup downloaden</button> <button class="btn secondary" onclick="importBackup()">📥 Backup importeren</button></div>`}
+}
+function newLetter(){editId=null;currentPhotos=[];selectedDesign="lavender";form()}
+function editLetter(id){let l=letters.find(x=>x.id===id);if(!l)return;editId=id;currentPhotos=[...(l.photos||[])];selectedDesign=l.design||"lavender";form(l)}
+function form(l={}){
+ $("#modalbox").innerHTML=`<h2>${editId?"✏️ Brief aanpassen":"💌 Nieuwe brief"}</h2>
+ <label>Titel</label><input id="fTitle" value="${esc(l.title||"")}">
+ <div class="row"><div><label>Aan</label><input id="fTo" value="${esc(l.to||"")}"></div><div><label>Openen op (leeg = direct)</label><input id="fDate" type="date" value="${esc(l.openDate||"")}"></div></div>
+ <label>Envelop</label><div class="designs">${Object.entries(designs).map(([k,v])=>`<button type="button" class="design ${selectedDesign===k?"selected":""}" onclick="chooseDesign('${k}',this)">${v[0]}<br><small>${v[1]}</small></button>`).join("")}</div>
+ <label>Tags (gescheiden door komma's)</label><input id="fTags" value="${esc((l.tags||[]).join(", "))}" placeholder="verjaardag, vriendin, later">
+ <label>Jouw brief</label><textarea id="fBody" placeholder="Lieve toekomstige ik...">${esc(l.body||"")}</textarea>
+ <label>Foto's — maximaal 20</label><div class="photo-input"><input id="fPhotos" type="file" accept="image/*" multiple onchange="addPhotos(this.files)"><small>Je kunt meerdere foto's tegelijk kiezen.</small><div class="preview" id="preview"></div></div>
+ <div class="actions"><button class="btn" onclick="saveLetter()">💾 Opslaan</button><button class="btn secondary" onclick="closeModal()">Annuleren</button></div>`;
+ renderPreview();$("#modal").classList.add("show")
+}
+function chooseDesign(k,el){selectedDesign=k;document.querySelectorAll(".design").forEach(x=>x.classList.remove("selected"));el.classList.add("selected")}
+function addPhotos(files){[...files].slice(0,20-currentPhotos.length).forEach(file=>{let r=new FileReader();r.onload=()=>{currentPhotos.push(r.result);renderPreview()};r.readAsDataURL(file)});if(files.length+currentPhotos.length>20)toast("Maximaal 20 foto's per brief 📸")}
+function renderPreview(){$("#preview").innerHTML=currentPhotos.map((p,i)=>`<div><img src="${p}"><button class="small" onclick="currentPhotos.splice(${i},1);renderPreview()">×</button></div>`).join("")}
+function saveLetter(){
+ let title=$("#fTitle").value.trim()||"Zonder titel", to=$("#fTo").value.trim(), openDate=$("#fDate").value;
+ let obj={id:editId||Date.now().toString(36)+Math.random().toString(36).slice(2),title,to,openDate,design:selectedDesign,tags:$("#fTags").value.split(",").map(x=>x.trim()).filter(Boolean),body:$("#fBody").value,photos:currentPhotos,favorite:editId?(letters.find(x=>x.id===editId)?.favorite||false):false,created:editId?(letters.find(x=>x.id===editId)?.created||Date.now()):Date.now()};
+ if(editId)letters=letters.map(x=>x.id===editId?obj:x);else letters.unshift(obj);save();closeModal();render("letters");toast("Brief opgeslagen 💌")
+}
+function openLetter(id){let l=letters.find(x=>x.id===id);if(!l)return;if(!isOpen(l)){toast("Deze brief is nog verzegeld 🔒");return}$("#modalbox").innerHTML=`<div class="env">${designs[l.design]?.[0]||"💌"}</div><h2>${esc(l.title)}</h2><p class="meta">Aan ${esc(l.to||"mijzelf")} · ${fmt(l.openDate)}</p><div class="letter-view">${esc(l.body||"Deze brief is leeg...")}</div>${l.photos?.length?`<div class="photos">${l.photos.map(p=>`<img src="${p}">`).join("")}</div>`:""}<div class="actions"><button class="btn" onclick="editLetter('${l.id}');">✏️ Bewerken</button><button class="btn secondary" onclick="shareLetter('${l.id}')">📤 Delen</button><button class="btn secondary" onclick="closeModal()">Sluiten</button></div>`;$("#modal").classList.add("show")}
+function toggleFav(id){let l=letters.find(x=>x.id===id);l.favorite=!l.favorite;save();render(document.querySelector("#nav button.active").dataset.page);toast(l.favorite?"Toegevoegd aan favorieten ⭐":"Favoriet verwijderd")}
+function deleteLetter(id){if(!confirm("Deze brief verwijderen?"))return;letters=letters.filter(x=>x.id!==id);save();render("letters");toast("Brief verwijderd")}
+function randomLetter(){if(!letters.length)return toast("Schrijf eerst een brief 💌");let open=letters.filter(isOpen);if(!open.length)return toast("Alle brieven zijn nog verzegeld 🔒");openLetter(open[Math.floor(Math.random()*open.length)].id)}
+function closeModal(){$("#modal").classList.remove("show")}
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()})
+function doSearch(){let q=$("#searchInput").value.toLowerCase();$("#results").innerHTML=letters.filter(l=>JSON.stringify(l).toLowerCase().includes(q)).map(card).join("")||`<div class="card empty">Niets gevonden 💭</div>`}
+async function shareLetter(id){let l=letters.find(x=>x.id===id);let text=`💌 ${l.title}\nAan: ${l.to||"mijzelf"}\n\n${l.body||""}`;if(navigator.share)try{await navigator.share({title:l.title,text})}catch{}else{await navigator.clipboard.writeText(text);toast("Brief gekopieerd 📋")}}
+function backup(){let blob=new Blob([JSON.stringify(letters)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="letter-box-backup.json";a.click()}
+function importBackup(){let i=document.createElement("input");i.type="file";i.accept=".json";i.onchange=()=>{let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(Array.isArray(x)){letters=x;save();render("letters");toast("Backup geïmporteerd ✨")}}catch{toast("Ongeldige backup")}};r.readAsText(i.files[0])};i.click()}
+$("#nav").addEventListener("click",e=>{if(e.target.dataset.page)render(e.target.dataset.page)})
+render();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
